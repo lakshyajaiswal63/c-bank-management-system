@@ -46,7 +46,7 @@ void createAccount() {
         int a, p;
         float b;
         char n[30];
-        while (fscanf(check, "%d %s %d %f", &a, n, &p, &b) != EOF) {
+        while (fscanf(check, "%d \"%[^\"]\" %d %f", &a, n, &p, &b) != EOF) {
             if (a == acc_no) {
                 exists = 1;
                 break;
@@ -77,7 +77,7 @@ void createAccount() {
 
     // Save account to file
     FILE *fatm = fopen("accounts.txt", "a");
-    fprintf(fatm, "%d %s %d %.2f\n", acc_no, name, pin, balance);
+    fprintf(fatm, "%d \"%s\" %d %.2f\n", acc_no, name, pin, balance);
     fclose(fatm);
 
     printf("Account created successfully!\n");
@@ -148,7 +148,7 @@ void login() {
                             float balance;
 
                             printf("\n-- All Accounts --\n");
-                            while (fscanf(fatm, "%d %s %d %f", &acc_no, name, &pin, &balance) != EOF)
+                            while (fscanf(fatm, "%d \"%[^\"]\" %d %f", &acc_no, name, &pin, &balance) != EOF)
                                 printf("Account: %d | Name: %s | PIN: %d | Balance: %.2fRs\n", acc_no, name, pin, balance);
                             fclose(fatm);
                             break;
@@ -197,7 +197,7 @@ void depositMoney(int inputAcc, int inputPin) {
     float balance[100], db;
 
     // Read all accounts and find the target account
-    while (fscanf(fatm, "%d %s %d %f", &acc_no[accountCount], name[accountCount], &pin[accountCount], &balance[accountCount]) != EOF) {
+    while (fscanf(fatm, "%d \"%[^\"]\" %d %f", &acc_no[accountCount], name[accountCount], &pin[accountCount], &balance[accountCount]) != EOF) {
         if (acc_no[accountCount] == inputAcc && pin[accountCount] == inputPin)
             targetIndex = accountCount;
         accountCount++;
@@ -212,7 +212,7 @@ void depositMoney(int inputAcc, int inputPin) {
         // Rewrite updated accounts
         fatm = fopen("accounts.txt", "w");
         for (int j = 0; j < accountCount; j++)
-            fprintf(fatm, "%d %s %d %.2f\n", acc_no[j], name[j], pin[j], balance[j]);
+            fprintf(fatm, "%d \"%s\" %d %.2f\n", acc_no[j], name[j], pin[j], balance[j]);
         fclose(fatm);
 
         printf("Deposit successful. New Balance: %.2fRs\n", balance[targetIndex]);
@@ -234,7 +234,7 @@ void withdrawMoney(int inputAcc, int inputPin) {
     float balance[100], wd;
 
     // Read all accounts and find the target account
-    while (fscanf(fatm, "%d %s %d %f", &acc_no[accountCount], name[accountCount], &pin[accountCount], &balance[accountCount]) != EOF) {
+    while (fscanf(fatm, "%d \"%[^\"]\" %d %f", &acc_no[accountCount], name[accountCount], &pin[accountCount], &balance[accountCount]) != EOF) {
         if (acc_no[accountCount] == inputAcc && pin[accountCount] == inputPin)
             targetIndex = accountCount;
         accountCount++;
@@ -255,7 +255,7 @@ void withdrawMoney(int inputAcc, int inputPin) {
         // Rewrite updated accounts
         fatm = fopen("accounts.txt", "w");
         for (int j = 0; j < accountCount; j++)
-            fprintf(fatm, "%d %s %d %.2f\n", acc_no[j], name[j], pin[j], balance[j]);
+            fprintf(fatm, "%d \"%s\" %d %.2f\n", acc_no[j], name[j], pin[j], balance[j]);
         fclose(fatm);
 
         printf("Withdrawal successful. New Balance: %.2fRs\n", balance[targetIndex]);
@@ -276,12 +276,12 @@ void deleteAccountA() {
     char n[30];
 
     // Copy all except the account to delete
-    while (fscanf(fp, "%d %s %d %f", &a, n, &p, &b) != EOF) {
+    while (fscanf(fp, "%d \"%[^\"]\" %d %f", &a, n, &p, &b) != EOF) {
         if (a == inputAcc) {
             deleted = 1;
             continue;
         }
-        fprintf(temp, "%d %s %d %.2f\n", a, n, p, b);
+        fprintf(temp, "%d \"%s\" %d %.2f\n", a, n, p, b);
     }
 
     fclose(fp); fclose(temp);
@@ -310,9 +310,9 @@ void deleteAccountU(int inputAcc, int inputPin) {
     float b;
     char n[30];
 
-    while (fscanf(fp, "%d %s %d %f", &a, n, &p, &b) != EOF) {
+    while (fscanf(fp, "%d \"%[^\"]\" %d %f", &a, n, &p, &b) != EOF) {
         if (a != inputAcc || p != inputPin)
-            fprintf(temp, "%d %s %d %.2f\n", a, n, p, b);
+            fprintf(temp, "%d \"%s\" %d %.2f\n", a, n, p, b);
     }
 
     fclose(fp); fclose(temp);
@@ -332,7 +332,7 @@ void getAccountIndex(int inputAcc, int inputPin, int *acc_no, char name[], int *
         return;
     }
 
-    while (fscanf(fatm, "%d %s %d %f", acc_no, name, pin, balance) != EOF) {
+    while (fscanf(fatm, "%d \"%[^\"]\" %d %f", acc_no, name, pin, balance) != EOF) {
         if (*acc_no == inputAcc && *pin == inputPin) {
             *found = 1;
             break;
